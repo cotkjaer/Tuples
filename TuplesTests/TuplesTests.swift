@@ -10,27 +10,66 @@ import XCTest
 @testable import Tuples
 
 class TuplesTests: XCTestCase {
+
+    func test_equal()
+    {
+        XCTAssert((1, 2.3) == (1, 2.3))
+        XCTAssert((1, "a", 2.3) == (1, "a", 2.3))
+        XCTAssert((1, "a", 2.3, true) == (1, "a", 2.3, true))
+
+        
+        XCTAssert((1, "a", 2.3, true) != (0, "a", 2.3, true))
+
+        XCTAssert((1, "a", 2.3, true) != (1, "b", 2.3, true))
+
+        XCTAssert((1, "a", 2.3, true) != (1, "a", 2.1, true))
+
+        XCTAssert((1, "a", 2.3, true) != (1, "a", 2.3, false))
+
+    }
+
     
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func test_concat()
+    {
+        let a = 1
+        let b = 2.3
+        let c = "c"
+        let d = true
+        let e = CGPointZero
+        
+        XCTAssert((a, b) + c == a + (b, c))
+        
+        XCTAssert((a, b) + (c, d) == (a, b, c, d))
+        
+        XCTAssert(a + (b, c, d) == (a, b, c, d))
+
+        XCTAssert((a, b, c) + d == (a, b, c, d))
+        
+        XCTAssert((a, b) + (c, d, e) == (a, b, c, d, e))
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func test_array()
+    {
+        guard let (a, b) : (Int, Int) = [1,2].tuple() else { XCTFail("could not form 2-tuple"); return }
+    
+        XCTAssertEqual(a, 1)
+        XCTAssertEqual(b, 2)
+        
+        let t : (Int, Int)? = [1,2,3].tuple()
+        
+        XCTAssertNil(t)
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func test_sort()
+    {
+        let t = (3, 2, 5, 4, 1)
+        
+        XCTAssert(ordered(t) == (1, 2, 3, 4, 5))
+        
+        XCTAssert(ordered(t, isOrderedBefore: >) == (5, 4, 3, 2, 1))
+                
+        let s = ordered(("bb", "a", "ccc")) { $0.characters.count > $1.characters.count }
+        
+        XCTAssert(s == ("ccc", "bb", "a"))
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
 }
